@@ -107,13 +107,13 @@ def test_inverse(transform: Transform, inverse_expected: Transform) -> None:
                 transformations=(
                     ByDimensionTransform(
                         transformation=Scale(scale=(4,)),
-                        input_axes=(2,),
-                        output_axes=(1,),
+                        inputAxes=(2,),
+                        outputAxes=(1,),
                     ),
                     ByDimensionTransform(
                         transformation=Translation(translation=(0.1, 0.3)),
-                        input_axes=(1, 0),
-                        output_axes=(0, 2),
+                        inputAxes=(1, 0),
+                        outputAxes=(0, 2),
                     ),
                 )
             ),
@@ -142,13 +142,13 @@ def test_transform_point(
                 transformations=(
                     ByDimensionTransform(
                         transformation=Scale(scale=(4,)),
-                        input_axes=(2,),
-                        output_axes=(1,),
+                        inputAxes=(2,),
+                        outputAxes=(1,),
                     ),
                     ByDimensionTransform(
                         transformation=Translation(translation=(0.1, 0.3)),
-                        input_axes=(1, 0),
-                        output_axes=(0, 2),
+                        inputAxes=(1, 0),
+                        outputAxes=(0, 2),
                     ),
                 )
             ),
@@ -261,7 +261,8 @@ def test_invalid_affine() -> None:
 
 
 def test_affine_dimension_mismatch() -> None:
-    t = Affine(affine=((1, 0), (0, 1)))
+    # in 2, out 2
+    t = Affine(affine=((1, 0, 0), (0, 1, 0)))
     with pytest.raises(
         ValueError,
         match=re.escape(
@@ -269,6 +270,12 @@ def test_affine_dimension_mismatch() -> None:
         ),
     ):
         t.transform_point((1,))
+
+
+def test_affine_dimension_mismatch_rectangle() -> None:
+    # in 2, out 3
+    t = Affine(affine=((1, 0, 0), (0, 1, 0), (0, 0, 0)))
+    t.transform_point((1, 1))
 
 
 def test_validate_mapaxis() -> None:

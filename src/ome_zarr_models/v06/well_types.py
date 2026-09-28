@@ -1,4 +1,5 @@
-from typing import Annotated, Literal
+from collections import defaultdict
+from typing import Annotated
 
 from pydantic import AfterValidator, Field
 
@@ -8,7 +9,6 @@ from ome_zarr_models.common.validation import (
     unique_items_validator,
     validate_zarr_node_name,
 )
-from ome_zarr_models.common.well_types import WellMeta as CommonWellMeta
 
 __all__ = ["WellImage", "WellMeta"]
 
@@ -29,14 +29,26 @@ class WellImage(BaseAttrs):
     )
 
 
-class WellMeta(CommonWellMeta):
+# ponytail: No version here—lives on WellAttrs via BaseOMEAttrs in v06
+class WellMeta(BaseAttrs):
     """
     Metadata for a single well.
     """
 
-    images: Annotated[list[WellImage], AfterValidator(unique_items_validator)] = Field(  # type: ignore[assignment]
+    images: Annotated[list[WellImage], AfterValidator(unique_items_validator)] = Field(
         ..., description="Images within a well"
     )
-    version: Literal["0.6"] | None = Field(
-        None, description="Version of the well specification"
-    )
+
+    def get_acquisition_paths(self) -> dict[int, list[str]]:
+        """
+        Get mapping from acquisition indices to corresponding paths.
+        """
+        acquisition_dict: dict[int, list[str]] = defaultdict(list)
+        for image in self.images:
+            if image.acquisition is None:
+                raise ValueError(
+                    "Cannot get acquisition paths for Zarr files without "
+                    "'acquisition' metadata at the well level"
+                )
+            acquisition_dict[image.acquisition].append(image.path)
+        return dict(acquisition_dict)

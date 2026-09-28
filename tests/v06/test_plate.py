@@ -45,7 +45,6 @@ def test_example_plate_json(store: Store) -> None:
             WellInPlate(path="B/2", rowIndex=1, columnIndex=1),
             WellInPlate(path="B/3", rowIndex=1, columnIndex=2),
         ],
-        version="0.6",
     )
 
 
@@ -95,7 +94,6 @@ def test_example_plate_json_2(store: Store) -> None:
             WellInPlate(path="C/5", rowIndex=2, columnIndex=4),
             WellInPlate(path="D/7", rowIndex=3, columnIndex=6),
         ],
-        version="0.6",
     )
 
 
@@ -104,7 +102,6 @@ def test_unique_column_names() -> None:
         Plate(
             columns=[Column(name="col1"), Column(name="col1")],
             rows=[Row(name="row1")],
-            version="0.4",
             wells=[WellInPlate(path="path1", rowIndex=1, columnIndex=1)],
         )
 
@@ -114,7 +111,6 @@ def test_unique_row_names() -> None:
         Plate(
             columns=[Column(name="col1")],
             rows=[Row(name="row1"), Row(name="row1")],
-            version="0.4",
             wells=[WellInPlate(path="path1", rowIndex=1, columnIndex=1)],
         )
 
@@ -146,6 +142,5 @@ def test_well_paths(well_path: str, msg: str) -> None:
         Plate(
             columns=[Column(name="col1")],
             rows=[Row(name="row1")],
-            version="0.4",
             wells=[WellInPlate(path=well_path, rowIndex=1, columnIndex=1)],
         )

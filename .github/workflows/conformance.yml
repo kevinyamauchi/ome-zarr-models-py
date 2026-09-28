@@ -31,8 +31,7 @@ jobs:
       - name: Install ome-zarr-models
         run: uv pip install .
 
-      # Installed as a uv tool rather than run with uvx, because uvx puts its
-      # own python on PATH, which the dingus would then pick up.
+      # Install oztest and make sure it is added to the path
       - name: Install oztest
         run: |
           uv tool install git+https://github.com/German-BioImaging/oztest@main
@@ -47,6 +46,8 @@ jobs:
             --out-file oztest-parse_attributes.json \
             ./conformance/parse_attributes_dingus.py
 
+      # Write a summary of the results. These are viewable
+      # under the "Summary" tab of the job in GitHub Actions.
       - name: Write job summary
         run: >-
           python conformance/summarize_results.py oztest-parse_attributes.json
